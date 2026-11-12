@@ -881,6 +881,22 @@ class ClaudeCodeSettings(BaseModel):
             raise ValueError("Claude Code path is required")
 
 
+class CodexSettings(BaseModel):
+    """Codex CLI settings"""
+
+    translate_engine_type: Literal["Codex"] = Field(default="Codex")
+    support_llm: Literal["yes"] = Field(default="yes")
+    codex_path: str = Field(default="codex", description="Path to Codex CLI")
+    codex_model: str | None = Field(
+        default=None,
+        description="Codex model to use; if omitted, the Codex CLI default is used",
+    )
+
+    def validate_settings(self):
+        if not self.codex_path:
+            raise ValueError("Codex CLI path is required")
+
+
 class CLISettings(BaseModel):
     """CLI translator settings
 
@@ -971,6 +987,7 @@ TRANSLATION_ENGINE_SETTING_TYPE: TypeAlias = (
     | QwenMtSettings
     | OpenAICompatibleSettings
     | ClaudeCodeSettings
+    | CodexSettings
     | CLISettings
 )
 
