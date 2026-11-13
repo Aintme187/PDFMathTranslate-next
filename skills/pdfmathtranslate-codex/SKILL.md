@@ -15,16 +15,16 @@ When the user asks to install this skill, install the skill files **and configur
 
 ## Understand the request before asking
 
-Use the user's message, prior turns in the same task, provided files, and local environment to resolve settings. Do not ask for information already supplied or that can be determined reliably. For example, if the user says “translate `paper.pdf` into Chinese,” use that file and infer Chinese as the target language without asking either question.
+Use the user's message, prior turns in the same task, provided files, and local environment to resolve settings. Skip a question only when the user directly specified that value or the setting is safely covered by the no-question defaults below. Keep explicit instructions distinct from agent inference.
 
-Infer the source language from the PDF's text/content when practical, not from its filename alone. Infer the target language from an explicit request first, then the user's language and expressed preferences. The upstream defaults `en` and `zh` are fallback values only; they are not mandatory defaults. If source or target language remains ambiguous, ask about one language at a time and show the best inferred value as the first choice.
+Infer the source language from the PDF's text/content when practical, not from its filename alone. Infer a likely target language from the user's explicit request, then their language and expressed preferences. **Inference provides a recommended first choice; it does not authorize the agent to decide.** Unless the user directly specified the source or target language, ask about each one separately and wait for confirmation, even when the likely language seems obvious. The upstream defaults `en` and `zh` can inform suggestions but must not silently replace user confirmation.
 
 Ask **one concise question per turn** only for a material choice that is both unresolved and not safely covered by an ordinary default. Wait for the answer before asking another question. Never send a numbered questionnaire, bundle unrelated choices, or ask the user to repeat known details. Do not turn every optional upstream setting into a question: absence of a glossary or custom prompt means none; use normal defaults for automatic glossary extraction, glossary saving, and worker count unless context suggests a different preference.
 
 Use this decision order, skipping resolved or safely defaulted items:
 
 1. **Input PDF path(s)** — ask only if no file/attachment/path was provided and none can be identified in the task workspace.
-2. **Source language**, then **target language** — infer as above; ask separately only if uncertain. Offer language names rather than requiring language codes.
+2. **Source language**, then **target language** — skip only if the user directly stated the language. Otherwise ask one at a time, even if confidently inferred; put the inferred language name first as the recommended choice and offer another language as an alternative. Do not require language codes.
 3. **Pages** — use all pages unless the user specified a range or the request/context indicates a subset; if subset intent is clear but the range is missing, ask for the range. Accept a page list/range supported by upstream syntax, e.g. `1,2,5-8`.
 4. **PDF output type** — if unspecified, ask one question with bilingual, monolingual, and both (upstream default) as choices. Honor context if the user already requested a deliverable type.
 5. **Output location** — default to the input PDF's containing directory. Ask only if the user requested a different destination ambiguously; offer “next to the input PDF” as the first/default choice.
