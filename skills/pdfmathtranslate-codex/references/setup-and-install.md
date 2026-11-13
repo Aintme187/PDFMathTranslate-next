@@ -18,7 +18,7 @@ The installer requires Git and Codex's built-in `skill-installer`. It installs `
 
 ## Other operating systems or direct generic-installer use
 
-The repository-owned automated installer currently targets Windows PowerShell. On another operating system, or if the skill was copied directly with the generic `$skill-installer`, the runtime may be provisioned during installation or when the user first requests a translation. Complete the following setup before starting the PDF translation:
+The repository-owned automated installer currently targets Windows PowerShell. On another operating system, or if the skill was copied directly with the generic `$skill-installer`, finish the runtime setup during that same installation task:
 
 1. Keep the skill at `$CODEX_HOME/skills/pdfmathtranslate-codex` (normally `~/.codex/skills/pdfmathtranslate-codex`).
 2. Clone `https://github.com/Aintme187/PDFMathTranslate-next.git`, branch `codex-translator-adapter`, into `$CODEX_HOME/tools/pdfmathtranslate-codex`. Do not overwrite an existing checkout with local changes.
@@ -26,7 +26,7 @@ The repository-owned automated installer currently targets Windows PowerShell. O
 4. Ensure the official Codex CLI is installed and authenticated. If missing, install `@openai/codex` through npm where available. If signed out, run `codex login` and complete the interactive flow.
 5. Verify `codex --version`, `codex login status`, `codex debug models`, and `uv run --project "$CODEX_HOME/tools/pdfmathtranslate-codex" pdf2zh_next --help`. Check command exit status. Do not expose the full model catalog; use only the fields needed to present available model choices.
 
-Do not ask the user to provide provider credentials. The adapter uses their existing Codex CLI authentication. Runtime setup is complete only after the command checks pass; if an interactive login cannot be completed, state that exact blocker and do not start translation.
+Do not ask the user to provide provider credentials. The adapter uses their existing Codex CLI authentication. Installation is complete only after runtime and command checks pass; if an interactive login cannot be completed, state that exact blocker and leave installation incomplete.
 
 ## Runtime lookup during translation
 
