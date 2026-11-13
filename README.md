@@ -82,6 +82,12 @@ You can try our application out using either of the following services:
 
 For different use cases, we provide distinct methods to use our program. Check out [this page](./getting-started/getting-started.md) for more information.
 
+### Codex translation skill
+
+This repository root is the PDFMathTranslate application, **not** a Codex skill. The skill is in [`skills/pdfmathtranslate-codex/`](./skills/pdfmathtranslate-codex/).
+
+When installing the skill, target that folder rather than the repository root. Installation is not complete after copying the skill files: the agent must also follow the skill's [setup instructions](./skills/pdfmathtranslate-codex/references/setup-and-install.md) and configure/verify the PDFMathTranslate runtime, Python dependencies, and authenticated Codex CLI in the same installation task. You should not need to separately ask the agent to check the environment.
+
 <h2 id="usage">Advanced Options</h2>
 
 For detailed explanations, please refer to our document about [Advanced Usage](https://pdf2zh-next.com/advanced/advanced.html) for a full list of each option.
