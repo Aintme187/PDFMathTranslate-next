@@ -4,11 +4,19 @@ Installing this skill is a setup task, not just copying `SKILL.md`. **Finish and
 
 ## Install the skill
 
-Use the built-in `$skill-installer` with this GitHub folder URL:
+The repository root is the PDFMathTranslate application, **not a skill**; it intentionally has no root `SKILL.md`. Install only the nested skill directory below. With the built-in skill-installer helper, specify the repository, branch, and subdirectory explicitly:
+
+```powershell
+python scripts/install-skill-from-github.py --repo Aintme187/PDFMathTranslate-next --path skills/pdfmathtranslate-codex --ref codex-translator-adapter
+```
+
+Or ask `$skill-installer` to install this exact GitHub folder URL:
 
 ```text
 https://github.com/Aintme187/PDFMathTranslate-next/tree/codex-translator-adapter/skills/pdfmathtranslate-codex
 ```
+
+Do not give the installer only the repository URL, because that points to the application root rather than the skill folder.
 
 The installer places `pdfmathtranslate-codex` under `$CODEX_HOME/skills` (normally `~/.codex/skills`). Then continue with runtime setup below in the same task. If the skill is not loaded until a new turn, read the just-installed `SKILL.md` and this reference and complete setup before ending the installation task. Restart or reload Codex if the skill does not appear.
 
