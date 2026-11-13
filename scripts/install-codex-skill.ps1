@@ -140,6 +140,11 @@ try {
     if (-not (Test-Path -LiteralPath (Join-Path $stagedSkill "SKILL.md"))) {
         throw "The official installer did not produce the expected skill folder at '$stagedSkill'."
     }
+    $registerScript = Join-Path $stagedSkill "scripts/register-runtime.ps1"
+    if (-not (Test-Path -LiteralPath $registerScript)) {
+        throw "The installed skill is missing its runtime registration helper: '$registerScript'."
+    }
+    & $registerScript -RuntimePath $runtime -UvPath $uv -CodexPath $codex
 
     if (Test-Path -LiteralPath $skillTarget) {
         throw "Skill destination '$skillTarget' appeared during installation. The staged skill was not published."
@@ -148,6 +153,8 @@ try {
     Write-Host "`nInstallation complete."
     Write-Host "Skill:   $skillTarget"
     Write-Host "Runtime: $runtime"
+    Write-Host "State:   $(Join-Path $skillTarget 'install-state.json')"
+    Write-Host "The install-state.json records the exact runtime, Python, uv, and Codex CLI paths for future sessions."
     Write-Host "Verified: Python 3.12 + uv dependencies, Codex CLI authentication/model catalog, pdf2zh_next --help"
     Write-Host "Restart or reload Codex if the skill is not yet visible."
 }

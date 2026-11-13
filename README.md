@@ -94,7 +94,7 @@ cd PDFMathTranslate-next
 .\scripts\install-codex-skill.ps1
 ```
 
-The installer calls Codex's built-in `skill-installer` for the nested skill folder, provisions a separate runtime checkout under `$CODEX_HOME/tools/pdfmathtranslate-codex`, installs Python 3.12 and the locked dependencies with `uv`, checks Codex CLI authentication/model discovery and the PDFMathTranslate command, and only then publishes the skill under `$CODEX_HOME/skills`. If any check fails, it exits with setup incomplete and does not publish the skill. Do not pass the repository root to the generic skill installer; the root is an application, not a skill.
+The installer calls Codex's built-in `skill-installer` for the nested skill folder, provisions a separate runtime checkout under `$CODEX_HOME/tools/pdfmathtranslate-codex`, installs Python 3.12 and the locked dependencies with `uv`, checks Codex CLI authentication/model discovery and the PDFMathTranslate command, and only then publishes the skill under `$CODEX_HOME/skills`. It writes `install-state.json` beside the skill with the exact runtime, virtual environment, Python, `pdf2zh_next`, uv, and Codex CLI paths, so later translation sessions can reuse that environment without guessing its location. If any check fails, it exits with setup incomplete and does not publish the skill. Do not pass the repository root to the generic skill installer; the root is an application, not a skill.
 
 <h2 id="usage">Advanced Options</h2>
 
