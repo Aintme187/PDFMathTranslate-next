@@ -21,6 +21,8 @@ Infer the source language from the PDF's text/content when practical, not from i
 
 Ask **one concise question per turn** only for a material choice that is both unresolved and not safely covered by an ordinary default. Wait for the answer before asking another question. Never send a numbered questionnaire, bundle unrelated choices, or ask the user to repeat known details. Do not turn every optional upstream setting into a question: absence of a glossary or custom prompt means none; use normal defaults for automatic glossary extraction, glossary saving, and worker count unless context suggests a different preference.
 
+When the host provides an interactive question tool with selectable options, use it instead of writing a plain-text question. Submit only the current question in each call; do not bundle later questions. For a choice with a recommended value, put that value first and label it clearly (for example, `English (recommended)`), then provide the meaningful alternatives; let the user choose or enter another value. Do not treat a suggested or preselected choice as the user's answer. For open-ended values such as a file path or custom prompt, use the tool's free-text input if available. Only fall back to a concise chat question with clearly listed choices when the host has no question tool.
+
 Use this decision order, skipping resolved or safely defaulted items:
 
 1. **Input PDF path(s)** — ask only if no file/attachment/path was provided and none can be identified in the task workspace.
@@ -36,11 +38,11 @@ Use this decision order, skipping resolved or safely defaulted items:
 
 Original layout preservation is inherent to this workflow, not a question. `codex_path` is a runtime setting: use the default `codex` executable when available, and consult setup guidance only if it is missing. Do not ask for unrelated provider credentials or service settings.
 
-After installation, the runtime should already be ready. If a later session cannot locate it, report that installation setup is incomplete and refer to [references/setup-and-install.md](references/setup-and-install.md); do not silently begin a first-use installation while preparing a translation. Do not ask for provider credentials: the adapter uses the user's existing Codex CLI login.
+After installation, the runtime may already be ready. If it is missing when the user requests a translation, provision it from [references/setup-and-install.md](references/setup-and-install.md) before translating, then continue the task. Ask for user input only if an interactive Codex login or another required choice blocks setup. Do not ask for provider credentials: the adapter uses the user's existing Codex CLI login.
 
 ## Run
 
-1. Locate the already-configured PDFMathTranslate-next checkout and verify `codex --version` and `pdf2zh_next --help` work. If setup is missing, stop before translation and explain that installation was not completed.
+1. Locate the configured PDFMathTranslate-next checkout and verify `codex --version` and `pdf2zh_next --help` work. If setup is missing, complete it using [references/setup-and-install.md](references/setup-and-install.md) before translating; report a blocker only if setup cannot proceed.
 2. Once the necessary questions are answered, use the inferred and collected values directly. Do not ask for a final confirmation. Keep original page layout enabled; it is the purpose of this workflow and is not a configurable question here.
 3. Run `pdf2zh_next` with the Codex engine and the agreed settings. Use argument arrays / correctly quoted paths; never alter the source PDF. For output location/type, pages, language, glossary, prompts, automatic glossary, model, and worker count, use only options exposed by the installed `pdf2zh_next --help` and its Codex adapter. Do not substitute another translation provider.
 4. Wait for the command to finish. Inspect its exit status and output paths; report failures with the relevant diagnostic instead of claiming success. Do not launch another translation run automatically after a failure.
