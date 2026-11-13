@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF Math Translate"
+  short_description: "Translate PDFs with layout preserved using Codex CLI."
+  default_prompt: "Translate this PDF with layout preserved. Gather missing settings first, then run PDFMathTranslate with Codex."
