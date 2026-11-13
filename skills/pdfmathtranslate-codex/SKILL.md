@@ -9,6 +9,10 @@ metadata:
 
 Use the PDFMathTranslate-next Codex translator adapter to translate PDF files and generate the requested PDF outputs. PDF parsing, layout reconstruction, placeholder handling, and PDF writing stay in PDFMathTranslate/BabelDOC; Codex CLI supplies translations.
 
+## Install and configure
+
+When the user asks to install this skill, install the skill files **and configure the PDFMathTranslate runtime before reporting installation complete**. Follow [references/setup-and-install.md](references/setup-and-install.md) in that installation task: locate or clone the adapter checkout, install its Python environment, ensure Codex CLI is installed and authenticated, and verify both commands and model discovery. Do not defer this setup until the first translation request. If interactive Codex login is needed, complete it during installation with the user and resume setup afterward.
+
 ## Understand the request before asking
 
 Use the user's message, prior turns in the same task, provided files, and local environment to resolve settings. Do not ask for information already supplied or that can be determined reliably. For example, if the user says “translate `paper.pdf` into Chinese,” use that file and infer Chinese as the target language without asking either question.
@@ -32,11 +36,11 @@ Use this decision order, skipping resolved or safely defaulted items:
 
 Original layout preservation is inherent to this workflow, not a question. `codex_path` is a runtime setting: use the default `codex` executable when available, and consult setup guidance only if it is missing. Do not ask for unrelated provider credentials or service settings.
 
-Read [references/setup-and-install.md](references/setup-and-install.md) when the skill or PDFMathTranslate runtime is not installed, or when the environment is not ready. Do not ask for provider credentials: the adapter uses the user's existing Codex CLI login.
+After installation, the runtime should already be ready. If a later session cannot locate it, report that installation setup is incomplete and refer to [references/setup-and-install.md](references/setup-and-install.md); do not silently begin a first-use installation while preparing a translation. Do not ask for provider credentials: the adapter uses the user's existing Codex CLI login.
 
 ## Run
 
-1. Locate the PDFMathTranslate-next checkout with the Codex adapter and the `pdf2zh_next` command. Confirm `codex --version` and `pdf2zh_next --help` work. If either is missing, follow the setup reference before proceeding.
+1. Locate the already-configured PDFMathTranslate-next checkout and verify `codex --version` and `pdf2zh_next --help` work. If setup is missing, stop before translation and explain that installation was not completed.
 2. Once the necessary questions are answered, use the inferred and collected values directly. Do not ask for a final confirmation. Keep original page layout enabled; it is the purpose of this workflow and is not a configurable question here.
 3. Run `pdf2zh_next` with the Codex engine and the agreed settings. Use argument arrays / correctly quoted paths; never alter the source PDF. For output location/type, pages, language, glossary, prompts, automatic glossary, model, and worker count, use only options exposed by the installed `pdf2zh_next --help` and its Codex adapter. Do not substitute another translation provider.
 4. Wait for the command to finish. Inspect its exit status and output paths; report failures with the relevant diagnostic instead of claiming success. Do not launch another translation run automatically after a failure.

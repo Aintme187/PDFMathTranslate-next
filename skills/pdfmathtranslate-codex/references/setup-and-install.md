@@ -1,6 +1,6 @@
 # Installation and runtime setup
 
-The skill and the PDF translator are separate components. Installing the skill adds its workflow instructions to Codex; the local PDFMathTranslate checkout provides the `pdf2zh_next` command. Codex CLI must also be installed and logged in because the translator adapter runs `codex exec` subprocesses.
+Installing this skill is a setup task, not just copying `SKILL.md`. **Finish and verify the translator runtime in the same installation task, before reporting success or waiting for the first PDF request.** The skill and PDF translator are separate components: the skill provides workflow instructions, the PDFMathTranslate checkout provides `pdf2zh_next`, and Codex CLI provides the translation engine.
 
 ## Install the skill
 
@@ -10,11 +10,19 @@ Use the built-in `$skill-installer` with this GitHub folder URL:
 https://github.com/Aintme187/PDFMathTranslate-next/tree/codex-translator-adapter/skills/pdfmathtranslate-codex
 ```
 
-The installer places `pdfmathtranslate-codex` under `$CODEX_HOME/skills` (normally `~/.codex/skills`). Restart or reload Codex if it does not appear after installation.
+The installer places `pdfmathtranslate-codex` under `$CODEX_HOME/skills` (normally `~/.codex/skills`). Then continue with runtime setup below in the same task. If the skill is not loaded until a new turn, read the just-installed `SKILL.md` and this reference and complete setup before ending the installation task. Restart or reload Codex if the skill does not appear.
 
 ## Install the translator runtime
 
-Requirements: Python 3.12 or newer within the repository's supported range, `uv`, and Codex CLI authenticated for the current user. Install Codex CLI and complete its normal login flow separately; do not copy credentials into PDFMathTranslate settings.
+Requirements: Python 3.12 or newer within the repository's supported range, `uv`, and an authenticated Codex CLI. During skill installation:
+
+1. Check for an existing checkout of `Aintme187/PDFMathTranslate-next` on branch `codex-translator-adapter`. Reuse it if present and clean; otherwise clone it to a stable user-owned development location. Do not overwrite or discard local changes in an existing checkout.
+2. Ensure `uv` and the repository's required Python version are available. If missing, install them using their official installation instructions, then run `uv sync` from the checkout.
+3. Ensure Codex CLI is installed. On systems with npm, the official package is `@openai/codex`; if it is missing and Node/npm is available, install it with `npm install -g @openai/codex@latest`. Otherwise use the official Codex CLI installation instructions for the current operating system.
+4. Run `codex login status`. If no account is authenticated, have the user complete `codex login` now; installation is not complete until the CLI can run with the user's account. Never request or copy credentials into project files.
+5. Verify `codex --version`, `codex debug models`, and `uv run pdf2zh_next --help` from the checkout. Parse/display only the model catalog fields required by the skill; do not dump the raw catalog. Resolve environment-specific failures now and do not report installation complete until all checks pass.
+
+Use the commands below when creating a fresh checkout. If `uv` or Python is missing, install them before continuing; do not wait for a later translation request.
 
 ```powershell
 git clone --branch codex-translator-adapter https://github.com/Aintme187/PDFMathTranslate-next.git
@@ -22,6 +30,8 @@ cd PDFMathTranslate-next
 uv sync
 uv run pdf2zh_next --help
 codex --version
+codex login status
+codex debug models
 ```
 
 Run from the checkout with `uv run pdf2zh_next ...`. Select the `Codex` translation engine so PDFMathTranslate uses the adapter added in this branch. If a local Codex executable is not on `PATH`, the upstream Codex setting `codex_path` can point to it. The optional `codex_model` selects the model; omitted means Codex CLI's configured default. To show available choices, `codex debug models` prints the current CLI model catalog as JSON; filter it to `visibility: "list"` and display only model names/descriptions rather than dumping the full catalog.
