@@ -11,7 +11,7 @@ Use the PDFMathTranslate-next Codex translator adapter to translate PDF files an
 
 ## Install and configure
 
-When the user asks to install this skill, install the skill files **and configure the PDFMathTranslate runtime before reporting installation complete**. Follow [references/setup-and-install.md](references/setup-and-install.md) in that installation task: locate or clone the adapter checkout, install its Python environment, ensure Codex CLI is installed and authenticated, and verify both commands and model discovery. Do not defer this setup until the first translation request. If interactive Codex login is needed, complete it during installation with the user and resume setup afterward.
+When the user asks to install this skill from the project repository, use its repository-owned installer. It installs the skill with Codex's official helper and configures/verifies the separate PDFMathTranslate runtime in the same task. Do not treat a successful skill-file copy as a complete installation. If installation was performed directly through the generic skill-installer, finish the setup in [references/setup-and-install.md](references/setup-and-install.md) before reporting success or waiting for the first PDF request. If Codex login requires user interaction, start that login during installation and resume the checks afterward.
 
 ## Understand the request before asking
 

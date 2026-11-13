@@ -1,52 +1,33 @@
-# Installation and runtime setup
+# Setup and installation
 
-Installing this skill is a setup task, not just copying `SKILL.md`. **Finish and verify the translator runtime in the same installation task, before reporting success or waiting for the first PDF request.** The skill and PDF translator are separate components: the skill provides workflow instructions, the PDFMathTranslate checkout provides `pdf2zh_next`, and Codex CLI provides the translation engine.
+This reference is for installing the skill or diagnosing a runtime that is missing after installation. A skill folder copy alone does not install the PDF translation application or its dependencies.
 
-## Install the skill
+## Recommended installation on Windows
 
-The repository root is the PDFMathTranslate application, **not a skill**; it intentionally has no root `SKILL.md`. Install only the nested skill directory below. With the built-in skill-installer helper, specify the repository, branch, and subdirectory explicitly:
-
-```powershell
-python scripts/install-skill-from-github.py --repo Aintme187/PDFMathTranslate-next --path skills/pdfmathtranslate-codex --ref codex-translator-adapter
-```
-
-Or ask `$skill-installer` to install this exact GitHub folder URL:
-
-```text
-https://github.com/Aintme187/PDFMathTranslate-next/tree/codex-translator-adapter/skills/pdfmathtranslate-codex
-```
-
-Do not give the installer only the repository URL, because that points to the application root rather than the skill folder.
-
-The installer places `pdfmathtranslate-codex` under `$CODEX_HOME/skills` (normally `~/.codex/skills`). Then continue with runtime setup below in the same task. If the skill is not loaded until a new turn, read the just-installed `SKILL.md` and this reference and complete setup before ending the installation task. Restart or reload Codex if the skill does not appear.
-
-## Install the translator runtime
-
-Requirements: Python 3.12 or newer within the repository's supported range, `uv`, and an authenticated Codex CLI. During skill installation:
-
-1. Check for an existing checkout of `Aintme187/PDFMathTranslate-next` on branch `codex-translator-adapter`. Reuse it if present and clean; otherwise clone it to a stable user-owned development location. Do not overwrite or discard local changes in an existing checkout.
-2. Ensure `uv` and the repository's required Python version are available. If missing, install them using their official installation instructions, then run `uv sync` from the checkout.
-3. Ensure Codex CLI is installed. On systems with npm, the official package is `@openai/codex`; if it is missing and Node/npm is available, install it with `npm install -g @openai/codex@latest`. Otherwise use the official Codex CLI installation instructions for the current operating system.
-4. Run `codex login status`. If no account is authenticated, have the user complete `codex login` now; installation is not complete until the CLI can run with the user's account. Never request or copy credentials into project files.
-5. Verify `codex --version`, `codex debug models`, and `uv run pdf2zh_next --help` from the checkout. Parse/display only the model catalog fields required by the skill; do not dump the raw catalog. Resolve environment-specific failures now and do not report installation complete until all checks pass.
-
-Use the commands below when creating a fresh checkout. If `uv` or Python is missing, install them before continuing; do not wait for a later translation request.
+The repository root is the PDFMathTranslate application, not a skill. Clone this branch and run its installer:
 
 ```powershell
 git clone --branch codex-translator-adapter https://github.com/Aintme187/PDFMathTranslate-next.git
 cd PDFMathTranslate-next
-uv sync
-uv run pdf2zh_next --help
-codex --version
-codex login status
-codex debug models
+.\scripts\install-codex-skill.ps1
 ```
 
-Run from the checkout with `uv run pdf2zh_next ...`. Select the `Codex` translation engine so PDFMathTranslate uses the adapter added in this branch. If a local Codex executable is not on `PATH`, the upstream Codex setting `codex_path` can point to it. The optional `codex_model` selects the model; omitted means Codex CLI's configured default. To show available choices, `codex debug models` prints the current CLI model catalog as JSON; filter it to `visibility: "list"` and display only model names/descriptions rather than dumping the full catalog.
+The script calls Codex's built-in `skill-installer` with the explicit GitHub repository, branch, and skill subdirectory. It provisions a runtime checkout at `$CODEX_HOME/tools/pdfmathtranslate-codex`, installs Python 3.12 and the locked dependencies using `uv`, verifies Codex CLI authentication and model discovery, and verifies `pdf2zh_next --help`. The skill is copied from the official helper's staging directory into `$CODEX_HOME/skills/pdfmathtranslate-codex` only after these checks pass. A failure leaves the installation incomplete and gives a diagnostic; do not claim success or defer setup until the first translation.
 
-## Operational notes
+The installer requires Git and Codex's built-in `skill-installer`. It installs `uv` and Python 3.12 when needed, then runs the official helper with that managed Python. If Codex CLI is absent and npm is available, it installs the official `@openai/codex` package. If the user is not signed in, it starts `codex login` during installation and verifies the resulting session.
 
-- Worker concurrency maps to PDFMathTranslate's existing `pool_max_workers` option. Omitted, the application uses its upstream default based on `qps` (4); each worker may launch a Codex CLI request. Reduce it if local resource use or request volume is too high.
-- Upstream source/target language defaults are `en`/`zh`. The skill infers likely languages from the PDF and conversation to recommend choices, but asks the user to confirm each language unless they stated it directly. Pages default to the whole document; both bilingual and monolingual outputs are generated by default. The skill defaults the output directory to the input PDF's containing directory (the CLI itself defaults to the current working directory).
-- Automatic glossary extraction is enabled by default and the extracted glossary is not saved by default. Use `--no-auto-extract-glossary` to disable extraction and `--save-auto-extracted-glossary` to save the generated glossary, if these options appear in the installed command's `--help`.
-- The exact CLI spelling can evolve. Confirm it with `uv run pdf2zh_next --help` before invoking less common settings; do not guess flags from the Python setting names.
+## Other operating systems or direct generic-installer use
+
+The repository-owned automated installer currently targets Windows PowerShell. On another operating system, or if the skill was already copied directly with the generic `$skill-installer`, finish runtime setup in the same installation task:
+
+1. Keep the skill at `$CODEX_HOME/skills/pdfmathtranslate-codex` (normally `~/.codex/skills/pdfmathtranslate-codex`).
+2. Clone `https://github.com/Aintme187/PDFMathTranslate-next.git`, branch `codex-translator-adapter`, into `$CODEX_HOME/tools/pdfmathtranslate-codex`. Do not overwrite an existing checkout with local changes.
+3. Install `uv` from Astral's official installer if needed; use `uv python install 3.12` and `uv sync --python 3.12` in the checkout.
+4. Ensure the official Codex CLI is installed and authenticated. If missing, install `@openai/codex` through npm where available. If signed out, run `codex login` and complete the interactive flow.
+5. Verify `codex --version`, `codex login status`, `codex debug models`, and `uv run --project "$CODEX_HOME/tools/pdfmathtranslate-codex" pdf2zh_next --help`. Check command exit status. Do not expose the full model catalog; use only the fields needed to present available model choices.
+
+Do not ask the user to provide provider credentials. The adapter uses their existing Codex CLI authentication. Installation is complete only after runtime and command checks pass; if an interactive login cannot be completed, state that exact blocker and leave the installation incomplete.
+
+## Runtime lookup during translation
+
+The expected runtime checkout is `$CODEX_HOME/tools/pdfmathtranslate-codex`. Run the application with `uv run --project <runtime-path> pdf2zh_next ...` and select its Codex translator. The optional `codex_model` selects a model; when omitted, the CLI's configured default is used. Worker concurrency uses the upstream `pool_max_workers` option; the default is four workers. Output defaults and translation-time choices are described in `SKILL.md`.
