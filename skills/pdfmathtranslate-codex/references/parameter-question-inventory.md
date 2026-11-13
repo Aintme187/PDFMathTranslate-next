@@ -12,7 +12,7 @@ Use this inventory before translating. It is based on the current upstream `Sett
 
 ## Questions for each translation task
 
-Ask these in order, skipping a value only when the user stated it directly. If a question has a conditional follow-up, ask that only after the preceding answer.
+The preference-use question in [preferences.md](preferences.md) comes before this list and is always the first interactive question unless answered by the user. Then ask these in order, skipping a value only when the user stated it directly, chose to apply a saved profile that supplies it, or its conditional feature does not apply. If a question has a conditional follow-up, ask that only after the preceding answer.
 
 1. **Input PDFs** (`basic.input_files`): ask for the path only if no file, attachment, or directory was provided. For a directory request, inspect it and report the matching PDF list; ask which files only if “all files” was not clear.
 2. **Source language** (`translation.lang_in`): when not explicit, ask separately. Put the language inferred from PDF text first as “recommended”; include “another language” / free text. Do not rely on the filename alone.
@@ -27,7 +27,7 @@ Ask these in order, skipping a value only when the user stated it directly. If a
 11. **Glossary CSVs** (`translation.glossaries`): if none was provided, ask whether to proceed without a glossary or use one or more CSV files. Ask for file paths after the user chooses to provide them.
 12. **Custom translation prompt** (`translation.custom_system_prompt`): if none was supplied, ask whether to use the standard prompt or add custom translation instructions. If custom is chosen, ask for the text in the next turn.
 13. **Automatic term extraction** (`translation.no_auto_extract_glossary`): ask enable/disable; recommend enabled (upstream default). If enabled, ask whether to save the extracted glossary (`translation.save_auto_extracted_glossary`, default no).
-14. **Codex model** (`CodexSettings.codex_model`): unless the user specified one, always show the available model choices and ask. Put the active CLI default first when it can be identified; otherwise recommend an available model using only the catalog's display name and description. “Use Codex CLI default” is a choice, not an implicit fallback.
+14. **Codex model** (`translate_engine_settings.codex_model`): unless the user specified one or opted to apply a saved preference for it, always show the available model choices and ask. Put the active CLI default first when it can be identified; otherwise recommend an available model using only the catalog's display name and description. “Use Codex CLI default” is a choice, not an implicit fallback.
 15. **Translation request rate** (`translation.qps`): ask whether to use 4 requests/second (upstream default/recommendation) or another supported positive value.
 16. **Translation worker count** (`translation.pool_max_workers`): ask whether to use 4 concurrent Codex requests (the effective upstream default) or another positive count. This is application worker concurrency, not Agent subagent count.
 17. **Term-extraction rate and workers** (`translation.term_qps`, `translation.term_pool_max_workers`): only if automatic extraction is enabled, ask whether each should follow the selected translation rate/worker count (upstream behavior) or be set separately. If separate is selected, ask the numeric value in the next turn.
